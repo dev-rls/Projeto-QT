@@ -1,0 +1,11 @@
+<RCC>
+  <qresource prefix="images">
+    <file>imagens/img_fragmentado.png</file>
+    <file>imagens/img_meumalvadofav.png</file>
+    <file>imagens/img_tefonepreto.png</file>
+    <file>imagens/img_ultimato.png</file>
+    <file>imagens/img_inv.domal.png</file>
+    <file>imagens/img_JohnWick.png</file>
+    <file>imagens/img_telaLogin.png</file>
+  </qresource>
+</RCC>

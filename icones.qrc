@@ -1,0 +1,28 @@
+<RCC>
+  <qresource prefix="icones">
+    <file>icons/trespontos.png</file>
+    <file>icons/cadeado_p.png</file>
+    <file>icons/casa.png</file>
+    <file>icons/Cash.png</file>
+    <file>icons/Confere.png</file>
+    <file>icons/fechar.png</file>
+    <file>icons/icon_favoritos.png</file>
+    <file>icons/icon_right.png</file>
+    <file>icons/user.png</file>
+    <file>icons/Usuario.png</file>
+    <file>icons/voltar_left.png</file>
+  </qresource>
+  <qresource prefix="images">
+    <file>imagens/img_fragmentado.png</file>
+    <file>imagens/img_inv.domal.png</file>
+    <file>imagens/img_jw.jpg</file>
+    <file>imagens/img_logo.png</file>
+    <file>imagens/img_meumalvadofav.png</file>
+    <file>imagens/img_minions.png</file>
+    <file>imagens/img_tefonepreto.png</file>
+    <file>imagens/img_telaLogin.png</file>
+    <file>imagens/img_ultimato.png</file>
+    <file>imagens/img_wicked.png</file>
+    <file>imagens/Login Page.png</file>
+  </qresource>
+</RCC>

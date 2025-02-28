@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="fundo_login">
+    <file>icons/user.png</file>
+    <file>icons/cadeado_p.png</file>
+    <file>imagens/img_telaLogin.png</file>
+  </qresource>
+</RCC>

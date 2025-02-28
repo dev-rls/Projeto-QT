@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="img_inicio">
+    <file>img_telaLogin.png</file>
+  </qresource>
+</RCC>
