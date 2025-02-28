@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), 'modulos'))
 sys.path.append(os.path.join(os.path.dirname(__file__), 'templates'))
 
-from main import LoginDialog, Inicio, TelaPrincipalRegistro, Home
+from modulos.main import LoginDialog, Inicio, TelaPrincipalRegistro, Home
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

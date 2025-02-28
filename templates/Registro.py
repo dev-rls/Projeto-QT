@@ -1,13 +1,3 @@
-# -*- coding: utf-8 -*-
-
-################################################################################
-## Form generated from reading UI file 'Registro.ui'
-##
-## Created by: Qt User Interface Compiler version 6.8.2
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
-
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
@@ -71,27 +61,32 @@ class Ui_tela_principal_registro(object):
         self.box_input.setContentsMargins(0, 0, 0, 0)
         self.input_nome = QLineEdit(self.layoutWidget)
         self.input_nome.setObjectName(u"input_nome")
+        self.input_nome.setStyleSheet(u"color: rgba(255, 255, 255, 255);")
 
         self.box_input.addWidget(self.input_nome)
 
         self.input_sobrenome = QLineEdit(self.layoutWidget)
         self.input_sobrenome.setObjectName(u"input_sobrenome")
         self.input_sobrenome.setStyleSheet(u"background-color: rgba(0, 0, 0, 0);")
+        self.input_sobrenome.setStyleSheet(u"color: rgba(255, 255, 255, 255);")
 
         self.box_input.addWidget(self.input_sobrenome)
 
         self.input_email = QLineEdit(self.layoutWidget)
         self.input_email.setObjectName(u"input_email")
+        self.input_email.setStyleSheet(u"color: rgba(255, 255, 255, 255);")
 
         self.box_input.addWidget(self.input_email)
 
         self.input_senha = QLineEdit(self.layoutWidget)
         self.input_senha.setObjectName(u"input_senha")
+        self.input_senha.setStyleSheet(u"color: rgba(255, 255, 255, 255);")
 
         self.box_input.addWidget(self.input_senha)
 
         self.input_confirmar_senha = QLineEdit(self.layoutWidget)
         self.input_confirmar_senha.setObjectName(u"input_confirmar_senha")
+        self.input_confirmar_senha.setStyleSheet(u"color: rgba(255, 255, 255, 255);")
 
         self.box_input.addWidget(self.input_confirmar_senha)
 
@@ -103,6 +98,9 @@ class Ui_tela_principal_registro(object):
 
     def retranslateUi(self, tela_principal_registro):
         tela_principal_registro.setWindowTitle(QCoreApplication.translate("tela_principal_registro", u"Form", None))
+        self.txt_boas_vindas.setStyleSheet(u"\n"
+"font: 700 11pt \"Segoe UI\";;\n"
+"    color: rgb(255, 255, 255)")
         self.txt_boas_vindas.setText(QCoreApplication.translate("tela_principal_registro", u"Estamos felizes que voc\u00ea chegou aqui!\n"
 "Crie sua conta para comprar ingressos e ganhar descontos", None))
         self.btn_registrar.setText(QCoreApplication.translate("tela_principal_registro", u"Registrar", None))
@@ -114,6 +112,8 @@ class Ui_tela_principal_registro(object):
         self.input_senha.setPlaceholderText(QCoreApplication.translate("tela_principal_registro", u"Senha", None))
         self.input_confirmar_senha.setPlaceholderText(QCoreApplication.translate("tela_principal_registro", u"Confirmar senha", None))
     # retranslateUi
+    def fechar (self,fechar,Ui_Inicio):
+        fechar.close()
 
 import sys
 if __name__ == "__main__":

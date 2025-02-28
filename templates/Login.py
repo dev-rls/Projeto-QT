@@ -65,7 +65,9 @@ class Ui_Login(object):
         self.btn_lembrar.setObjectName(u"btn_lembrar")
         self.btn_lembrar.setGeometry(QRect(320, 320, 78, 20))
         self.btn_lembrar.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.btn_lembrar.setStyleSheet(u"font: 600 9pt \"Segoe UI\";")
+        self.btn_lembrar.setStyleSheet(u"font: 600 9pt \"Segoe UI\";\n"
+"    color: rgb(255, 255, 255)")
+        
         self.layoutWidget = QWidget(Login)
         self.layoutWidget.setObjectName(u"layoutWidget")
         self.layoutWidget.setGeometry(QRect(310, 230, 271, 42))

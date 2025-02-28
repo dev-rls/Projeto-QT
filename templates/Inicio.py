@@ -22,12 +22,12 @@ class Ui_Inicio(object):
     def setupUi(self, Inicio):
         if not Inicio.objectName():
             Inicio.setObjectName(u"Inicio")
-        Inicio.resize(869, 459)
+        Inicio.resize(1000, 490)
         Inicio.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.img_fundoTelaBemVindo = QLabel(Inicio)
         self.img_fundoTelaBemVindo.setObjectName(u"img_fundoTelaBemVindo")
         self.img_fundoTelaBemVindo.setGeometry(QRect(10, 0, 850, 450))
-        self.img_fundoTelaBemVindo.setMaximumSize(QSize(899, 500))
+        self.img_fundoTelaBemVindo.setMaximumSize(QSize(900, 500))
         self.img_fundoTelaBemVindo.setAcceptDrops(False)
         self.img_fundoTelaBemVindo.setAutoFillBackground(False)
         self.img_fundoTelaBemVindo.setPixmap(QPixmap(u":/img_inicio/img_telaLogin.png"))
@@ -56,7 +56,8 @@ class Ui_Inicio(object):
         self.txt_chamada.setObjectName(u"txt_chamada")
         self.txt_chamada.setGeometry(QRect(230, 310, 431, 21))
         self.txt_chamada.setStyleSheet(u"\n"
-"font: 900 16pt \"Segoe UI\";")
+"font: 900 16pt \"Segoe UI\";;\n"
+"    color: rgb(255, 255, 255)")
         self.btn_login = QPushButton(Inicio)
         self.btn_login.setObjectName(u"btn_login")
         self.btn_login.setGeometry(QRect(760, 40, 90, 30))
@@ -92,8 +93,9 @@ class Ui_Inicio(object):
         self.img_fundoTelaBemVindo.setAccessibleName("")
 #endif // QT_CONFIG(accessibility)
         self.img_fundoTelaBemVindo.setText("")
-        self.input_criarConta.setPlaceholderText(QCoreApplication.translate("Inicio", u"Email", None))
+        self.input_criarConta.setPlaceholderText(QCoreApplication.translate("Inicio", u"Inscreva-se",None))
         self.btn_criarConta.setText(QCoreApplication.translate("Inicio", u"Criar conta", None))
+        self.input_criarConta.setStyleSheet("QLineEdit::placeholder { color: white; }")
         self.txt_chamada.setText(QCoreApplication.translate("Inicio", u"Confira os filmes em cartaz nesta semana", None))
         self.btn_login.setText(QCoreApplication.translate("Inicio", u"Login", None))
         self.txt_logo.setText(QCoreApplication.translate("Inicio", u"<html><head/><body><p><span style=\" font-size:12pt; color:#ffffff;\">Bem Vindo</span><span style=\" font-size:12pt; font-weight:700; color:#c5444c;\"> PobreVision</span></p></body></html>", None))
