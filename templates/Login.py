@@ -18,7 +18,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QSizePolicy,
     QWidget)
-import fundo_login_rc
+
+import templates.fundo_login_rc
 
 class Ui_Login(object):
     def setupUi(self, Login):

@@ -17,7 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QLabel, QLineEdit,
     QPushButton, QSizePolicy, QVBoxLayout, QWidget)
-import icones
+import templates.icones
 
 class Ui_tela_principal_registro(object):
     def setupUi(self, tela_principal_registro):

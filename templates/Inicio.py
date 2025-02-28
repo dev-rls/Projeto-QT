@@ -17,7 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QLabel, QLineEdit, QPushButton,
     QSizePolicy, QWidget)
-import img_inicio
+import templates.img_inicio
 class Ui_Inicio(object):
     def setupUi(self, Inicio):
         if not Inicio.objectName():

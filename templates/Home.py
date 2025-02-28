@@ -17,8 +17,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QLabel, QMainWindow,
     QSizePolicy, QWidget)
-import images
-import icones
+import templates.images
+import templates.icones
+
 
 class Ui_Home(object):
     def setupUi(self, Home):
