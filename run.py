@@ -10,19 +10,25 @@ from modulos.main import LoginDialog, Inicio, TelaPrincipalRegistro, Home
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
+    # Criar o QStackedWidget sem tamanho fixo
     stacked_widget = QStackedWidget()
+    stacked_widget.setWindowTitle("PobreVision")
+
+    # Instanciar as telas
     inicio = Inicio(stacked_widget)
     login = LoginDialog(stacked_widget)
     register = TelaPrincipalRegistro()
     home = Home()
 
+    # Adicionar as telas ao QStackedWidget
     stacked_widget.addWidget(inicio)  # Índice 0
     stacked_widget.addWidget(login)   # Índice 1
     stacked_widget.addWidget(register) # Índice 2
     stacked_widget.addWidget(home)    # Índice 3
 
+    # Definir o tamanho inicial com base na tela de início
+    stacked_widget.resize(inicio.preferred_size())  # Usar o tamanho preferido da tela inicial
     stacked_widget.setCurrentIndex(0)  # Mostra a tela de Início inicialmente
     stacked_widget.show()
 
     sys.exit(app.exec())
-
