@@ -2,29 +2,29 @@ from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon, QPixmap, QIcon,
+    QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QLabel, QMainWindow, QPushButton,
-    QSizePolicy, QWidget)
+    QSizePolicy, QWidget, QDialog)
 
-import os, sys
+import os
+import sys
 
 from Inicio import Ui_Inicio
 from Login import Ui_Login
 
-class telainicio(QObject):
-    def __init__(self, *args,**argvs):
-        super(telainicio,self).__init__(*args, **argvs)
+class TelaInicio(QDialog):  # Alterei para herdar de QDialog em vez de QObject
+    def __init__(self):
+        super().__init__()
         self.ui = Ui_Inicio()
         self.ui.setupUi(self)
 
-
+if __name__ == "__main__":  # Adicionei o bloco main
     app = QApplication(sys.argv)
-    if(QDialog.Accepted = True):
-    window= Ui_Inicio ()
+    window = TelaInicio()  # Criei a instância corretamente
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 ''''''
 # from PySide6.QtWidgets import QApplication, QDialog, QMainWindow, QStackedWidget, QMessageBox
