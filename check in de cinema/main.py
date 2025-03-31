@@ -7,7 +7,7 @@ def main():
     print("Abrindo o sistema de check-in de cinema...")
     app = QApplication(sys.argv)
     window = CinemaApp()
-    window.show()
+    window.showFullScreen()
     sys.exit(app.exec())
 
 if __name__ == "__main__":
