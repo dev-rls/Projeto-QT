@@ -1,6 +1,7 @@
 # database.py
 import mysql.connector
 from mysql.connector import Error
+import requests
 
 class CinemaDatabase:
     def __init__(self):
@@ -21,10 +22,20 @@ class CinemaDatabase:
                 print("Conectado ao MySQL com sucesso!")
                 self.criar_tabelas()
                 self.inserir_dados_iniciais()
+            else:
+                print("Falha ao conectar ao MySQL: conexão não estabelecida.")
+                self.conn = None
+                self.cursor = None
         except Error as e:
             print(f"Erro ao conectar ao MySQL: {e}")
+            self.conn = None
+            self.cursor = None
 
     def criar_tabelas(self):
+        if self.cursor is None:
+            print("Erro: Não há conexão com o banco de dados. Não é possível criar tabelas.")
+            return
+
         tabelas = [
             """
             CREATE TABLE IF NOT EXISTS usuarios (
@@ -63,7 +74,7 @@ class CinemaDatabase:
                 classificacao VARCHAR(255) NOT NULL,
                 sinopse TEXT NOT NULL,
                 trailer_url VARCHAR(255) NOT NULL,
-                poster_path VARCHAR(255),  -- Novo campo para o caminho do pôster
+                poster_data MEDIUMBLOB,  -- Campo para armazenar os dados binários da imagem
                 FOREIGN KEY (cinema_id) REFERENCES cinemas(id)
             )
             """,
@@ -77,21 +88,6 @@ class CinemaDatabase:
                 tipo_sala VARCHAR(255) NOT NULL,
                 lotacao_maxima INT NOT NULL,
                 FOREIGN KEY (filme_id) REFERENCES filmes(id),
-                FOREIGN KEY (cinema_id) REFERENCES cinemas(id)
-            )
-            """,
-            """
-            CREATE TABLE IF NOT EXISTS filmes (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                nome VARCHAR(255) NOT NULL,
-                cinema_id INT,
-                duracao TIME NOT NULL,
-                data_lancamento DATE NOT NULL,
-                genero VARCHAR(255) NOT NULL,
-                classificacao VARCHAR(255) NOT NULL,
-                sinopse TEXT NOT NULL,
-                trailer_url VARCHAR(255) NOT NULL,
-                poster_data MEDIUMBLOB,  -- Novo campo para armazenar os dados binários da imagem
                 FOREIGN KEY (cinema_id) REFERENCES cinemas(id)
             )
             """,
@@ -127,23 +123,24 @@ class CinemaDatabase:
             )
             """
         ]
+
         for tabela in tabelas:
             self.cursor.execute(tabela)
             self.conn.commit()
 
-            # Verificar a estrutura da tabela filmes
-            self.cursor.execute("SHOW COLUMNS FROM filmes")
-            colunas = [coluna[0] for coluna in self.cursor.fetchall()]
-            colunas_esperadas = ['id', 'nome', 'cinema_id', 'duracao', 'data_lancamento', 'genero', 'classificacao', 'sinopse', 'trailer_url', 'poster_data']
-            for coluna in colunas_esperadas:
-                if coluna not in colunas:
-                    if coluna == 'poster_data':
-                        self.cursor.execute("ALTER TABLE filmes ADD COLUMN poster_data MEDIUMBLOB")
-                        self.conn.commit()
-                        print("Coluna 'poster_data' adicionada à tabela 'filmes'.")
-                    else:
-                        raise Exception(f"Coluna '{coluna}' não encontrada na tabela 'filmes'. Estrutura do banco de dados está incorreta.")
-            print("Estrutura da tabela 'filmes' verificada com sucesso.")
+        # Verificar a estrutura da tabela filmes
+        self.cursor.execute("SHOW COLUMNS FROM filmes")
+        colunas = [coluna[0] for coluna in self.cursor.fetchall()]
+        colunas_esperadas = ['id', 'nome', 'cinema_id', 'duracao', 'data_lancamento', 'genero', 'classificacao', 'sinopse', 'trailer_url', 'poster_data']
+        for coluna in colunas_esperadas:
+            if coluna not in colunas:
+                if coluna == 'poster_data':
+                    self.cursor.execute("ALTER TABLE filmes ADD COLUMN poster_data MEDIUMBLOB")
+                    self.conn.commit()
+                    print("Coluna 'poster_data' adicionada à tabela 'filmes'.")
+                else:
+                    raise Exception(f"Coluna '{coluna}' não encontrada na tabela 'filmes'. Estrutura do banco de dados está incorreta.")
+        print("Estrutura da tabela 'filmes' verificada com sucesso.")
 
         # Verificar a estrutura da tabela sessoes
         self.cursor.execute("SHOW COLUMNS FROM sessoes")
@@ -227,7 +224,10 @@ class CinemaDatabase:
         print("Estrutura da tabela 'favoritos' verificada com sucesso.")
 
     def inserir_dados_iniciais(self):
-        import requests
+        if self.cursor is None:
+            print("Erro: Não há conexão com o banco de dados. Não é possível inserir dados iniciais.")
+            return
+
         self.cursor.execute("SELECT COUNT(*) FROM cinemas")
         count = self.cursor.fetchone()[0]
         print(f"Total de cinemas no banco: {count}")
@@ -248,74 +248,74 @@ class CinemaDatabase:
             # Filmes
             filmes = [
                 ("Fé para o Impossível", 1, "01:40:00", "2023-08-15", "Drama", "12", 
-                "Um jovem enfrenta desafios para alcançar um milagre.", "https://www.youtube.com/watch?v=b7vP1opVt5A", 
-                "https://br.web.img3.acsta.net/r_1920_1080/img/68/4c/684cb2caf5f1442da5ef8d376c32ec04.jpg"),
+                 "Um jovem enfrenta desafios para alcançar um milagre.", "https://www.youtube.com/watch?v=b7vP1opVt5A", 
+                 "https://br.web.img3.acsta.net/r_1920_1080/img/68/4c/684cb2caf5f1442da5ef8d376c32ec04.jpg"),
                 ("Meu Malvado Favorito 1", 1, "01:35:00", "2010-07-09", "Animação", "Livre", 
-                "Gru, um vilão, adota três meninas e descobre o amor.", "https://www.youtube.com/watch?v=sUkZFetWYY0", 
-                "https://br.web.img3.acsta.net/r_1920_1080/pictures/23/05/05/16/09/2641829.jpg"),
+                 "Gru, um vilão, adota três meninas e descobre o amor.", "https://www.youtube.com/watch?v=sUkZFetWYY0", 
+                 "https://br.web.img3.acsta.net/r_1920_1080/pictures/23/05/05/16/09/2641829.jpg"),
                 ("Meu Malvado Favorito 2", 1, "01:38:00", "2013-07-03", "Animação", "Livre", 
-                "Gru é recrutado para salvar o mundo.", "https://youtu.be/gi2QWNZ9jms?si=DbPr2-JSSfbGU4ML", 
-                "https://br.web.img2.acsta.net/r_1920_1080/pictures/210/173/21017357_2013070316550589.jpg"),
+                 "Gru é recrutado para salvar o mundo.", "https://youtu.be/gi2QWNZ9jms?si=DbPr2-JSSfbGU4ML", 
+                 "https://br.web.img2.acsta.net/r_1920_1080/pictures/210/173/21017357_2013070316550589.jpg"),
                 ("Meu Malvado Favorito 3", 2, "01:36:00", "2017-06-29", "Animação", "Livre", 
-                "Gru conhece seu irmão gêmeo Dru.", "https://www.youtube.com/watch?v=e5e5kFPg2kA", 
-                "https://br.web.img2.acsta.net/pictures/17/03/14/20/37/126690.jpg"),
+                 "Gru conhece seu irmão gêmeo Dru.", "https://www.youtube.com/watch?v=e5e5kFPg2kA", 
+                 "https://br.web.img2.acsta.net/pictures/17/03/14/20/37/126690.jpg"),
                 ("Meu Malvado Favorito 4", 2, "01:40:00", "2024-07-03", "Animação", "Livre", 
-                "Gru enfrenta um novo vilão com sua família.", "https://www.youtube.com/watch?v=qQlr9-rXrCg", 
-                "https://br.web.img3.acsta.net/r_1920_1080/img/6c/71/6c71afa89fd8ed8999b3e04d8d794a0e.jpg"),
+                 "Gru enfrenta um novo vilão com sua família.", "https://www.youtube.com/watch?v=qQlr9-rXrCg", 
+                 "https://br.web.img3.acsta.net/r_1920_1080/img/6c/71/6c71afa89fd8ed8999b3e04d8d794a0e.jpg"),
                 ("Minions 1", 3, "01:31:00", "2015-07-09", "Animação", "Livre", 
-                "Os Minions buscam um novo mestre do mal.", "https://www.youtube.com/watch?v=eisKxhjBnZ0", 
-                "https://br.web.img3.acsta.net/r_1920_1080/img/08/89/08892c6553a80e2e71ca85f3eb1635d8.jpg"),
+                 "Os Minions buscam um novo mestre do mal.", "https://www.youtube.com/watch?v=eisKxhjBnZ0", 
+                 "https://br.web.img3.acsta.net/r_1920_1080/img/08/89/08892c6553a80e2e71ca85f3eb1635d8.jpg"),
                 ("Minions 2", 3, "01:27:00", "2022-07-01", "Animação", "Livre", 
-                "Os Minions ajudam Gru a se tornar um vilão.", "https://www.youtube.com/watch?v=6DxjJzmYsXo", 
-                "https://br.web.img3.acsta.net/pictures/20/02/03/15/22/4954456.jpg"),
+                 "Os Minions ajudam Gru a se tornar um vilão.", "https://www.youtube.com/watch?v=6DxjJzmYsXo", 
+                 "https://br.web.img3.acsta.net/pictures/20/02/03/15/22/4954456.jpg"),
                 ("Shrek - 2001", 1, "01:30:00", "2001-05-18", "Animação", "Livre", 
-                "Shrek, um ogro, tenta resgatar uma princesa.", "https://www.youtube.com/watch?v=CwXOrW2rjWY", 
-                "https://img.elo7.com.br/product/zoom/42EF263/poster-3-shrek-2001-mdf-3mm-28x40cm-ogro.jpg"),
+                 "Shrek, um ogro, tenta resgatar uma princesa.", "https://www.youtube.com/watch?v=CwXOrW2rjWY", 
+                 "https://img.elo7.com.br/product/zoom/42EF263/poster-3-shrek-2001-mdf-3mm-28x40cm-ogro.jpg"),
                 ("Shrek 2 - 2004", 1, "01:33:00", "2004-05-19", "Animação", "Livre", 
-                "Shrek conhece os pais de Fiona.", "https://www.youtube.com/watch?v=5Z0h0s2WJaQ", 
-                "https://br.web.img2.acsta.net/medias/nmedia/18/97/04/22/20504502.jpg"),
+                 "Shrek conhece os pais de Fiona.", "https://www.youtube.com/watch?v=5Z0h0s2WJaQ", 
+                 "https://br.web.img2.acsta.net/medias/nmedia/18/97/04/22/20504502.jpg"),
                 ("Shrek Terceiro - 2007", 2, "01:33:00", "2007-05-18", "Animação", "Livre", 
-                "Shrek precisa encontrar um novo rei para o trono.", "https://www.youtube.com/watch?v=PhS7XAv1t1k", 
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCNpaUkUFwrG_UQEWQmjI9bBz8dt6gXphzTA&s.jpg"),
+                 "Shrek precisa encontrar um novo rei para o trono.", "https://www.youtube.com/watch?v=PhS7XAv1t1k", 
+                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCNpaUkUFwrG_UQEWQmjI9bBz8dt6gXphzTA&s.jpg"),
                 ("Shrek no Natal", 2, "00:30:00", "2007-11-28", "Animação", "Livre", 
-                "Shrek tenta celebrar o Natal pela primeira vez.", "https://www.youtube.com/watch?v=9xS9gM1gms0", 
-                "https://br.web.img2.acsta.net/c_300_300/pictures/20/10/30/13/48/2427606.jpg"),
+                 "Shrek tenta celebrar o Natal pela primeira vez.", "https://www.youtube.com/watch?v=9xS9gM1gms0", 
+                 "https://br.web.img2.acsta.net/c_300_300/pictures/20/10/30/13/48/2427606.jpg"),
                 ("Shrek para Sempre - 2010", 3, "01:33:00", "2010-05-21", "Animação", "Livre", 
-                "Shrek faz um pacto que muda sua realidade.", "https://www.youtube.com/watch?v=SLMiCGl4Sfs", 
-                "https://br.web.img2.acsta.net/medias/nmedia/18/87/90/45/19962744.jpg"),
+                 "Shrek faz um pacto que muda sua realidade.", "https://www.youtube.com/watch?v=SLMiCGl4Sfs", 
+                 "https://br.web.img2.acsta.net/medias/nmedia/18/87/90/45/19962744.jpg"),
                 ("O Susto de Shrek - 2010", 3, "00:30:00", "2010-10-28", "Animação", "Livre", 
-                "Shrek organiza uma competição de sustos no Halloween.", "https://www.youtube.com/watch?v=9xS9gM1gms0", 
-                "https://m.media-amazon.com/images/M/MV5BMDg0NDUwYjItMmRjYi00MzNjLTkyY2EtM2FiMjE1NWY4ZTY0XkEyXkFqcGc@._V1_.jpg"),
+                 "Shrek organiza uma competição de sustos no Halloween.", "https://www.youtube.com/watch?v=9xS9gM1gms0", 
+                 "https://m.media-amazon.com/images/M/MV5BMDg0NDUwYjItMmRjYi00MzNjLTkyY2EtM2FiMjE1NWY4ZTY0XkEyXkFqcGc@._V1_.jpg"),
                 ("Shrek 5 - 2026", 1, "01:35:00", "2026-05-20", "Animação", "Livre", 
-                "Shrek retorna para uma nova aventura.", "https://www.youtube.com/watch?v=CwXOrW2rjWY", 
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0NhwrLk9_JsWmnj19Yuw6NKabZDTjgA44gA&s"),
+                 "Shrek retorna para uma nova aventura.", "https://www.youtube.com/watch?v=CwXOrW2rjWY", 
+                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0NhwrLk9_JsWmnj19Yuw6NKabZDTjgA44gA&s"),
                 ("Capitão América: Admirável Mundo Novo", 2, "02:10:00", "2025-02-14", "Ação", "14", 
-                "Sam Wilson enfrenta novas ameaças como Capitão América.", "https://www.youtube.com/watch?v=O_A8HdCDaWM", 
-                "https://br.web.img2.acsta.net/img/56/0c/560c72bf877f88472877898cebe00ff0.jpg"),
+                 "Sam Wilson enfrenta novas ameaças como Capitão América.", "https://www.youtube.com/watch?v=O_A8HdCDaWM", 
+                 "https://br.web.img2.acsta.net/img/56/0c/560c72bf877f88472877898cebe00ff0.jpg"),
                 ("Sonic 1", 3, "01:39:00", "2020-02-14", "Aventura", "Livre", 
-                "Sonic se junta a um amigo humano para deter o Dr. Robotnik.", "https://www.youtube.com/watch?v=szby7ZHLnkA", 
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPi29CQGC_FEcoQYQwxP2oqafgjIQmP56zsw&s"),
+                 "Sonic se junta a um amigo humano para deter o Dr. Robotnik.", "https://www.youtube.com/watch?v=szby7ZHLnkA", 
+                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPi29CQGC_FEcoQYQwxP2oqafgjIQmP56zsw&s"),
                 ("Sonic 2", 1, "02:02:00", "2022-04-08", "Aventura", "Livre", 
-                "Sonic enfrenta Knuckles e o Dr. Robotnik.", "https://www.youtube.com/watch?v=47r8FXYZWNU", 
-                "https://ingresso-a.akamaihd.net/prd/img/movie/sonic-2/fde04f56-1afb-4c71-9ff2-97dac723f8d8.jpg"),
+                 "Sonic enfrenta Knuckles e o Dr. Robotnik.", "https://www.youtube.com/watch?v=47r8FXYZWNU", 
+                 "https://ingresso-a.akamaihd.net/prd/img/movie/sonic-2/fde04f56-1afb-4c71-9ff2-97dac723f8d8.jpg"),
                 ("Sonic 3", 2, "02:05:00", "2024-12-20", "Aventura", "Livre", 
-                "Sonic e amigos lutam contra Shadow.", "https://www.youtube.com/watch?v=qSu6iXzF4oc", 
-                "https://ingresso-a.akamaihd.net/b2b/production/uploads/articles-content/f64cf04e-7707-4f9d-9f65-34534f0f59cc.jpg"),
+                 "Sonic e amigos lutam contra Shadow.", "https://www.youtube.com/watch?v=qSu6iXzF4oc", 
+                 "https://ingresso-a.akamaihd.net/b2b/production/uploads/articles-content/f64cf04e-7707-4f9d-9f65-34534f0f59cc.jpg"),
                 ("Vingadores Ultimato", 3, "03:01:00", "2019-04-26", "Ação", "12", 
-                "Os Vingadores tentam reverter o estalo de Thanos.", "https://www.youtube.com/watch?v=TcMBFSGVi1c", 
-                "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_FMjpg_UX1000_.jpg"),
+                 "Os Vingadores tentam reverter o estalo de Thanos.", "https://www.youtube.com/watch?v=TcMBFSGVi1c", 
+                 "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_FMjpg_UX1000_.jpg"),
                 ("Wicked", 1, "02:30:00", "2024-11-27", "Musical", "10", 
-                "A história de Elphaba e Glinda antes de O Mágico de Oz.", "https://www.youtube.com/watch?v=F1dvwe-d0uE", 
-                "https://a-static.mlcdn.com.br/1500x1500/poster-cartaz-wicked-posterflix/poparteskins2/pos-03834-30x45cm/e92bba484442009644de7d4742b2bad0.jpeg"),
+                 "A história de Elphaba e Glinda antes de O Mágico de Oz.", "https://www.youtube.com/watch?v=F1dvwe-d0uE", 
+                 "https://a-static.mlcdn.com.br/1500x1500/poster-cartaz-wicked-posterflix/poparteskins2/pos-03834-30x45cm/e92bba484442009644de7d4742b2bad0.jpeg"),
                 ("Fragmentados", 2, "01:52:00", "2016-09-22", "Suspense", "16", 
-                "Três personalidades de um homem sequestram uma jovem.", "https://www.youtube.com/watch?v=84TouqfIsiI", 
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStsn2EtcjMJhYV4Wvwh4jdqqonSwPQp2WRWA&s"),
+                 "Três personalidades de um homem sequestram uma jovem.", "https://www.youtube.com/watch?v=84TouqfIsiI", 
+                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStsn2EtcjMJhYV4Wvwh4jdqqonSwPQp2WRWA&s"),
                 ("Telefone Preto", 3, "01:43:00", "2022-06-24", "Terror", "16", 
-                "Uma criança sequestrada recebe ajuda de vítimas do passado.", "https://www.youtube.com/watch?v=A1DmL8tDaoA", 
-                "https://br.web.img3.acsta.net/pictures/22/06/23/21/10/1998178.jpg"),
+                 "Uma criança sequestrada recebe ajuda de vítimas do passado.", "https://www.youtube.com/watch?v=A1DmL8tDaoA", 
+                 "https://br.web.img3.acsta.net/pictures/22/06/23/21/10/1998178.jpg"),
                 ("Invocação do Mal", 1, "01:52:00", "2013-07-19", "Terror", "16", 
-                "Investigadores paranormais enfrentam uma entidade demoníaca.", "https://www.youtube.com/watch?v=k10ETZ41q5o", 
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPTyYBnPwo2Ni0Wj81VSngSgChiKjh44bN2Q&s"),
+                 "Investigadores paranormais enfrentam uma entidade demoníaca.", "https://www.youtube.com/watch?v=k10ETZ41q5o", 
+                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPTyYBnPwo2Ni0Wj81VSngSgChiKjh44bN2Q&s"),
             ]
 
             filmes_inseridos = []
@@ -386,7 +386,7 @@ class CinemaDatabase:
             print(f"Inseridos assentos para {len(sessoes_ids)} sessões.")
 
     def fechar_conexao(self):
-        if self.conn.is_connected():
+        if self.conn is not None and self.conn.is_connected():
             self.cursor.close()
             self.conn.close()
             print("Conexão ao MySQL fechada.")
