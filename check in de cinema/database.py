@@ -11,10 +11,6 @@ class CinemaDatabase:
     def conectar(self):
         try:
             self.conn = mysql.connector.connect(
-                host='127.0.0.1',
-                database='dbcinema',
-                user='suporte',
-                password='suporte'
             )
             if self.conn.is_connected():
                 self.cursor = self.conn.cursor()
